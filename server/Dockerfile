@@ -1,4 +1,4 @@
-FROM python:3.7-stretch
+FROM --platform=linux/x86_64 python:3.7-stretch
 
 ARG BUILD_ENV
 ARG OVERCOOKED_BRANCH
@@ -10,6 +10,7 @@ WORKDIR /app
 # Install non-chai dependencies
 COPY ./requirements.txt ./requirements.txt
 RUN pip install -r requirements.txt
+RUN pip install -U https://tf.novaal.de/barcelona/tensorflow-2.5.0-cp37-cp37m-linux_x86_64.whl
 
 # Install eventlet production server if production build
 RUN if [ "$BUILD_ENV" = "production" ] ; then pip install eventlet ; fi
