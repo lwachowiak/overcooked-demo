@@ -13,6 +13,9 @@ from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from game import OvercookedGame, OvercookedTutorial, Game
 import game
+import pyautogui, cv2, threading
+import numpy as np
+from datetime import datetime
 
 
 ### Thoughts -- where I'll log potential issues/ideas as they come up
@@ -555,6 +558,31 @@ def play_game(game, fps=30):
             game.deactivate()
         cleanup_game(game)
 
+class ScreenRecorder:
+
+    def __init__(self):
+
+        self.screensize = tuple(pyautogui.size())
+        self.codec = cv2.VideoWriter_fourcc(*'mp4v')
+        self.fps = 15
+        self.is_stopped = False
+        self.writer = cv2.VideoWriter(str(datetime.now().mp4), self.codec, self.fps, self.screensize)
+
+    def start(self):
+
+        while not self.is_stopped:
+
+            frame = np.array(pyautogui.screenshot())
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            self.writer.write(frame)
+
+        cv2.destroyAllWindows()
+        self.writer.release()
+
+    def stop(self):
+
+        self.is_stopped = True
+        return self.is_stopped
 
 
 if __name__ == '__main__':
