@@ -529,7 +529,7 @@ class OvercookedGame(Game):
         if GAME_ROUND==1:
             return Level1_AI(self)
         else:
-            return StayAI()
+            return Level2_AI(self)
 
 class OvercookedTutorial(OvercookedGame):
 
@@ -747,7 +747,117 @@ class Level1_AI():
 
 class Level2_AI():
 
-    GAME_LOOP = []
+    CORRECT_LOOP = [
+        # Place first tomato
+        Direction.EAST,
+        Direction.SOUTH,
+        Action.INTERACT,
+        Direction.NORTH,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+
+        # Place first onion
+        Direction.WEST,
+        Direction.WEST,
+        Direction.SOUTH,
+        Action.INTERACT,
+        Direction.NORTH,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+
+        # Place second onion
+        Direction.SOUTH,
+        Action.INTERACT,
+        Direction.NORTH,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,    
+    ]
+
+    SERVE_DISH_LOOP = [
+        # Pick dish and serve
+        Direction.EAST,
+        Direction.NORTH,
+        Action.INTERACT,
+        Direction.SOUTH,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+    ]
+
+    def __init__(self, overcookedgame):
+        self.curr_tick = -1
+        self.dish_loop_tick = -1
+        self.overcookedgame=overcookedgame
+        self.subroutine = False
+        self.serve_isdone = False
+
+    def action(self, state):
+
+        #check if sth is on the counter
+        game_state = self.overcookedgame.get_state() if self.overcookedgame._is_active else None
+        st_objects=game_state["state"]["objects"] # HOW TO GET THE STATE??????
+        object_on_counter=False
+        dish_on_counter=False
+        for obj in st_objects:
+            if obj["position"]==(3,2):
+                object_on_counter=True
+        for obj in st_objects:
+            if obj["position"]==(4,2) and obj["name"]=='soup':
+                self.subroutine = True
+
+        if not self.subroutine:
+        #execute actions based on whether there is sth on the counter or not        
+            if object_on_counter or self.serve_isdone:
+                return Action.STAY, None
+            elif self.curr_tick % 34 != 0 or self.curr_tick == 0:
+                self.curr_tick += 1
+                return self.CORRECT_LOOP[self.curr_tick % len(self.CORRECT_LOOP)], None
+            else:
+                self.serve_isdone = True
+                return Action.STAY, None
+                
+        elif self.subroutine:
+            if self.dish_loop_tick < 12:
+                self.dish_loop_tick+= 1
+                return self.SERVE_DISH_LOOP[self.dish_loop_tick % len(self.SERVE_DISH_LOOP)], None
+            else:
+                self.curr_tick = -1
+                self.dish_loop_tick = -1
+                self.subroutine = False
+                self.serve_isdone = False
+                return Action.STAY, None
+
+    def reset(self):
+        self.curr_tick = -1
+        self.dish_loop_tick = -1
+        return self
 
 
 
