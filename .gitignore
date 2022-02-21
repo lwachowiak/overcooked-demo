@@ -8,3 +8,5 @@ node_modules/
 **/__pycache__/
 **/agents/
 Dockerfile
+server/Dockerfile
+up.sh
