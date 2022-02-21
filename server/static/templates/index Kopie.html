@@ -29,8 +29,40 @@
     <form>
       <div class="container">
       <div class="row text-center">
-
- 
+	<div class="form-group col-lg-3">
+	  <label for="playerZero" style="color:#1E6A9E">Player 1</label>
+	  <select class="form-control" id="playerZero" name="playerZero">
+        <option value="human">Human Keyboard Input</option>
+        {% for agent_name in agent_names %}
+            <option value={{agent_name}}>{{agent_name}}</option>
+        {% endfor %}
+	  </select>
+    </div>
+  <div class="form-group col-lg-3">
+    <label for="playerOne" style="color:#44956B">Player 2</label>
+    <select class="form-control" id="playerOne" name="playerOne">
+        <option value="human">Human Keyboard Input</option>
+        {% for agent_name in agent_names %}
+            <option value={{agent_name}}>{{agent_name}}</option>
+        {% endfor %}
+    </select>
+  </div>
+	<div class="form-group col-lg-2">
+	  <label for="layout">Layout</label>
+	  <select class="form-control" id="layout" name="layout">
+        {% for layout in layouts %}
+            <option value={{layout}}>{{layout}}</option>
+        {% endfor %}
+	  </select>
+	</div>
+  <div class="form-group col-lg-2">
+    <label for="gameTime">Game Length (sec)</label>
+    <input type="number" id="gameTime" value="30" min="1" max="1800" name="gameTime">
+  </div>
+  <div class="form-group col-lg-2">
+    <label for="showPotential">Show Potential?</label>
+    <input type="checkbox" id="showPotential" name="showPotential">
+  </div>
   
       </div>
       </div>
@@ -45,13 +77,15 @@
       Waiting for game to be created. Please be patient...
     </div>
     <div id="overcooked-container" class="text-center">
-        <h4 id="game-title" style="display:none"></h4>
-        <h4 id="game-over" style="display:none">Wait for the experimenter to introduce you to the next round...</h4>
+        <h4 id="game-title" style="display:none">Game in Progress</h4>
+        <h4 id="game-over" style="display:none">Game Over</h4>
         <div id="overcooked"></div>
         <div id="error-exit" style="display:none">Game ended unexpectedly (probably due to another user disconnecting)</div>
     </div>
     <div id="control" class="text-center">
-        <button id="create">Start</button>
+        <button id="create">Create Game</button>
+        <button id="join">Join Existing Game</button>
+        <button id="leave" style="display:none;">Leave</button>
     </div>
     
 

@@ -16,6 +16,9 @@ AGENT_DIR = None
 # Maximum allowable game time (in seconds)
 MAX_GAME_TIME = None
 
+GAME_ROUND = 0
+
+
 def _configure(max_game_time, agent_dir):
     global AGENT_DIR, MAX_GAME_TIME
     MAX_GAME_TIME = max_game_time
@@ -381,8 +384,24 @@ class OvercookedGame(Game):
         - _curr_game_over: Determines whether the game on the current mdp has ended
     """
 
-    def __init__(self, layouts=["cramped_room"], mdp_params={}, num_players=2, gameTime=30, playerZero='human', playerOne='human', showPotential=False, randomized=False, **kwargs):
+    def __init__(self, layouts=["forced_coordination"], mdp_params={}, num_players=2, gameTime=15, playerZero='human', playerOne='human', showPotential=False, randomized=False, **kwargs):
         super(OvercookedGame, self).__init__(**kwargs)
+
+        # hard code the environment and agents used for the experiment
+        global GAME_ROUND
+        GAME_ROUND+=1
+        if GAME_ROUND==1:
+            layouts=["forced_coordination_KCL"]
+        else:
+            layouts=["counter_circuit"]
+        playerZero="human"
+        playerOne="notHuman"
+      
+        
+        #emit("FINDMEEEEEEXXXXXXXXXXXXXXXXXXXXXXX")
+        #emit(playerOne)
+
+
         self.show_potential = showPotential
         self.mdp_params = mdp_params
         self.layouts = layouts
@@ -579,90 +598,12 @@ class OvercookedGame(Game):
         return obj_dict
 
     def get_policy(self, npc_id, idx=0):
-        if npc_id.lower().startswith("rllib"):
-            try:
-                # Loading rllib agents requires additional helpers
-                fpath = os.path.join(AGENT_DIR, npc_id, 'agent', 'agent')
-                agent =  load_agent(fpath, agent_index=idx)
-                return agent
-            except Exception as e:
-                raise IOError("Error loading Rllib Agent\n{}".format(e.__repr__()))
-            finally:
-                # Always kill ray after loading agent, otherwise, ray will crash once process exits
-                if ray.is_initialized():
-                    ray.shutdown()
+        global GAME_ROUND
+        if GAME_ROUND==1:
+            return Level1_AI(self)
         else:
-            try:
-                fpath = os.path.join(AGENT_DIR, npc_id, 'agent.pickle')
-                with open(fpath, 'rb') as f:
-                    return pickle.load(f)
-            except Exception as e:
-                raise IOError("Error loading agent\n{}".format(e.__repr__()))
+            return StayAI()
 
-
-class OvercookedPsiturk(OvercookedGame):
-    """
-    Wrapper on OvercookedGame that handles additional housekeeping for Psiturk experiments
-
-    Instance Variables:
-        - trajectory (list(dict)): list of state-action pairs in current trajectory
-        - psiturk_uid (string): Unique id for each psiturk game instance (provided by Psiturk backend)
-            Note, this is not the user id -- two users in the same game will have the same psiturk_uid
-        - trial_id (string): Unique identifier for each psiturk trial, updated on each call to reset
-            Note, one OvercookedPsiturk game handles multiple layouts. This is how we differentiate
-
-    Methods:
-        get_data: Returns the accumulated trajectory data and clears the self.trajectory instance variable
-    
-    """
-
-    def __init__(self, *args, psiturk_uid='-1', **kwargs):
-        super(OvercookedPsiturk, self).__init__(*args, showPotential=False, **kwargs)
-        self.psiturk_uid = psiturk_uid
-        self.trajectory = []
-
-    def activate(self):
-        """
-        Resets trial ID at start of new "game"
-        """
-        super(OvercookedPsiturk, self).activate()
-        self.trial_id = self.psiturk_uid + str(self.start_time)
-
-    def apply_actions(self):
-        """
-        Applies pending actions then logs transition data
-        """
-        # Apply MDP logic
-        prev_state, joint_action, info = super(OvercookedPsiturk, self).apply_actions()
-
-        # Log data to send to psiturk client
-        curr_reward = sum(info['sparse_reward_by_agent'])
-        transition = {
-            "state" : json.dumps(prev_state.to_dict()),
-            "joint_action" : json.dumps(joint_action),
-            "reward" : curr_reward,
-            "time_left" : max(self.max_time - (time() - self.start_time), 0),
-            "score" : self.score,
-            "time_elapsed" : time() - self.start_time,
-            "cur_gameloop" : self.curr_tick,
-            "layout" : json.dumps(self.mdp.terrain_mtx),
-            "layout_name" : self.curr_layout,
-            "trial_id" : self.trial_id,
-            "player_0_id" : self.players[0],
-            "player_1_id" : self.players[1],
-            "player_0_is_human" : self.players[0] in self.human_players,
-            "player_1_is_human" : self.players[1] in self.human_players
-        }
-
-        self.trajectory.append(transition)
-
-    def get_data(self):
-        """
-        Returns and then clears the accumulated trajectory
-        """
-        data = { "uid" : self.psiturk_uid  + "_" + str(time()), "trajectory" : self.trajectory }
-        self.trajectory = []
-        return data
 
 
 class OvercookedTutorial(OvercookedGame):
@@ -780,6 +721,99 @@ class DummyComputeAI(DummyAI):
         # Return randomly sampled action
         return super(DummyComputeAI, self).action(state)
 
+
+class Level1_AI():
+
+    CORRECT_LOOP = [
+        # Grab first onion
+        Direction.WEST,
+        Action.INTERACT,
+        Direction.NORTH,
+        Direction.EAST,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+
+        # Grab second onion
+        Direction.SOUTH,
+        Direction.WEST,
+        Action.INTERACT,
+        Direction.NORTH,
+        Direction.EAST,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+
+        # Grab third onion
+        Direction.SOUTH,
+        Direction.WEST,
+        Action.INTERACT,
+        Direction.NORTH,
+        Direction.EAST,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+
+        # Grab a plate
+        Direction.SOUTH,
+        Direction.SOUTH,
+        Direction.WEST,
+        Action.INTERACT,
+        Direction.NORTH,
+        Direction.NORTH,
+        Direction.EAST,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Direction.NORTH
+    ]
+
+    def __init__(self, overcookedgame):
+        self.curr_tick = -1
+        self.overcookedgame=overcookedgame
+
+
+    def action(self, state):
+        #check if sth is on the counter
+        game_state = self.overcookedgame.get_state() if self.overcookedgame._is_active else None
+        st_objects=game_state["state"]["objects"] # HOW TO GET THE STATE??????
+        object_on_counter=False
+        for obj in st_objects:
+            if obj["position"]==(2,1):
+                object_on_counter=True
+        #execute actions based on whether there is sth on the counter or not        
+        if object_on_counter:
+            return Action.STAY, None
+        else:
+            self.curr_tick += 1
+            return self.CORRECT_LOOP[self.curr_tick % len(self.CORRECT_LOOP)], None
+
+    def reset(self):
+        self.curr_tick = -1
     
 class StayAI():
     """

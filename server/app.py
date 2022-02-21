@@ -11,7 +11,7 @@ from threading import Lock
 from utils import ThreadSafeSet, ThreadSafeDict
 from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO, join_room, leave_room, emit
-from game import OvercookedGame, OvercookedTutorial, Game, OvercookedPsiturk
+from game import OvercookedGame, OvercookedTutorial, Game
 import game
 
 
@@ -88,7 +88,6 @@ USER_ROOMS = ThreadSafeDict()
 GAME_NAME_TO_CLS = {
     "overcooked" : OvercookedGame,
     "tutorial" : OvercookedTutorial,
-    "psiturk" : OvercookedPsiturk
 }
 
 game._configure(MAX_GAME_LENGTH, AGENT_DIR)
@@ -129,6 +128,7 @@ def try_create_game(game_name ,**kwargs):
         - Runtime error if server is at max game capacity
         - Propogate any error that occured in game __init__ function
     """
+   
     try:
         curr_id = FREE_IDS.get(block=False)
         assert FREE_MAP[curr_id], "Current id is already in use"
@@ -543,6 +543,8 @@ def play_game(game, fps=30):
             socketio.sleep(game.reset_timeout/1000)
         else:
             socketio.emit('state_pong', { "state" : game.get_state() }, room=game.id)
+            socketio.emit(game.get_state()["state"])
+
         socketio.sleep(1/fps)
     
     with game.lock:
