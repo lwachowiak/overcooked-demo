@@ -126,25 +126,18 @@
       <h3 class="text-center">Soups</h3>
       <p>
         There are different soup recipes that can be created from combinations of tomatoes
-        and onions, each with its own icon. The recipe icons and the corresponding ingredients are
-        listed below
+        and onions, each with its own icon. In the levels you play you will only receive orders consisting out of soups made from 2 onions and 1 tomato.
       </p>
+
       <table>
         <tr>
           <th>Ingredients</th>
           <th>Icon</th>
         </tr>
-        {% for num_tomatoes in range(layout_conf.max_num_ingredients + 1) %}
-          {% for num_onions in range(layout_conf.max_num_ingredients + 1) %}
-            {% if num_tomatoes + num_onions > 0 and num_onions + num_tomatoes <= layout_conf.max_num_ingredients %}
               <tr>
-                <td>{{ num_onions ~ " Onion" if num_onions }} {{ num_tomatoes ~ " Tomato" if num_tomatoes }}</td>
-                <td><img src="{{ "static/assets/new_sprites/soup_done_tomato_" ~ num_tomatoes ~ "_onion_" ~ num_onions ~ ".png" }}" style="width:75px;background-color: #e6b453;"></td>
+                <td>2 Onions, 1 Tomato</td>
+                <td><img src="static/assets/new_sprites/soup_done_tomato_1_onion_2.png" style="width:75px;background-color: #e6b453;"></td>
               </tr>
-            {% endif %}
-          {% endfor %}
-        {% endfor %}
-
       </table>
 
       <br>
