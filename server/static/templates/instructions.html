@@ -39,6 +39,7 @@
       {% if not psiturk %}
         <h4 class="text-center"><a href="./">Back to game</a></h4>
       {% endif %}
+      <br>
       <p>
         Hello! In this task, you will be playing a
         cooking game. You will play one of two chefs
@@ -104,14 +105,7 @@
       </p>
       <p>
         When a soup begins cooking, you'll notice a red number appear over the pot to 
-        denote the cook time. This number counts upward until the soup is done. Soup 
-        cook time is determined its ingredients; every onion add {{ layout_conf.onion_time }} and 
-        every tomato adds {{ layout_conf.tomato_time }} to the cook time.
-      </p>
-      <p>
-        Additionally, the base 
-        reward for any recipe is determined by its ingredients; each onion adds {{ layout_conf.onion_value }} 
-        points and each tomato adds {{ layout_conf.tomato_value }} points.
+        denote the cook time. This number counts upward until the soup is done.
       </p>
 
       <br>
@@ -131,7 +125,7 @@
 
       <h3 class="text-center">Soups</h3>
       <p>
-        There are 9 possible soup recipes that can be created from combinations of tomatoes
+        There are different soup recipes that can be created from combinations of tomatoes
         and onions, each with its own icon. The recipe icons and the corresponding ingredients are
         listed below
       </p>
@@ -139,8 +133,6 @@
         <tr>
           <th>Ingredients</th>
           <th>Icon</th>
-          <th>Base Reward</th>
-          <th>Cook Time</th>
         </tr>
         {% for num_tomatoes in range(layout_conf.max_num_ingredients + 1) %}
           {% for num_onions in range(layout_conf.max_num_ingredients + 1) %}
@@ -148,8 +140,6 @@
               <tr>
                 <td>{{ num_onions ~ " Onion" if num_onions }} {{ num_tomatoes ~ " Tomato" if num_tomatoes }}</td>
                 <td><img src="{{ "static/assets/new_sprites/soup_done_tomato_" ~ num_tomatoes ~ "_onion_" ~ num_onions ~ ".png" }}" style="width:75px;background-color: #e6b453;"></td>
-                <td>{{ layout_conf.onion_value * num_onions + layout_conf.tomato_value * num_tomatoes }}</td>
-                <td>{{ layout_conf.onion_time * num_onions + layout_conf.tomato_time * num_tomatoes }}</td>
               </tr>
             {% endif %}
           {% endfor %}
@@ -174,23 +164,10 @@
       <hr>
       <br>
 
-      <h3 class="text-center">Bonus Orders</h3>
-      <p>
-        In addition to the list of available orders, there is also a list of <b>bonus orders</b>. Any 
-        soup from this list served will be worth its base reward times {{ layout_conf.order_bonus }}
-      </p>
-
-      <br>
-      <hr>
-      <br>
 
       <h3 class="text-center">Score</h3>
       <p>
-        When a soup is served at the serving counter, points could potentially be added to your score.
-        The base reward for any recipe is determined by its ingredients; each onion adds {{ layout_conf.onion_value }} 
-        points and each tomato adds {{ layout_conf.tomato_value }} points. Note that serving a soup in the <b>Bonus Orders</b>
-        multiplies the base soup score by {{ layout_conf.order_bonus }}. Additionally, serving a soup not in the
-        <b>All Orders</b> list results in zero points not matter what!
+        When you serve a soup specified in <b>All Orders</b> at the grey serving counter, 10 points are added to your score.
       </p>
 
       <br>
@@ -202,7 +179,7 @@
       <p>
         Your goal in this task is to serve as many of the orders as you can
         before each level ends.
-        The current all orders, bonus orders, time, and score are all displayed 
+        The current order, time, and score are all displayed 
         in an info panel below the layout.
       </p>
 
