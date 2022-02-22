@@ -620,7 +620,6 @@ class Level1_AI():
         Action.STAY,
 
         # Grab second onion
-        Direction.SOUTH,
         Direction.WEST,
         Action.INTERACT,
         Direction.NORTH,
@@ -824,52 +823,130 @@ class Level2_AI():
         Action.STAY,
     ]
 
+    ERROR_LOOP = [
+        # move up and place an ingredient in the pot
+        
+        # get onion
+        Direction.WEST,
+        Direction.SOUTH,
+        Action.INTERACT,
+
+        # move to pot and place onion 
+        Direction.WEST,
+        Direction.WEST,
+        Direction.NORTH,
+        Direction.NORTH,
+        Direction.EAST,
+        Direction.EAST,
+        Direction.NORTH,
+        Action.INTERACT,
+
+        # move back
+        Direction.WEST,
+        Direction.WEST,
+        Direction.SOUTH,
+        Direction.SOUTH,
+        Direction.EAST,
+        Direction.EAST,
+        Direction.EAST,
+
+        # place tomato and second onion 
+        Direction.EAST,
+        Direction.SOUTH,
+        Action.INTERACT,
+        Direction.NORTH,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+
+        Direction.WEST,
+        Direction.WEST,
+        Direction.SOUTH,
+        Action.INTERACT,
+        Direction.NORTH,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY
+
+
+
+     
+    ]
+
     def __init__(self, overcookedgame):
         self.curr_tick = -1
+        self.error_tick = -1
         self.dish_loop_tick = -1
+        self.successful_loops=0
         self.overcookedgame=overcookedgame
-        self.subroutine = False
+        self.soup_ready = False
         self.serve_isdone = False
 
     def action(self, state):
 
         #check if sth is on the counter
         game_state = self.overcookedgame.get_state() if self.overcookedgame._is_active else None
-        st_objects=game_state["state"]["objects"] # HOW TO GET THE STATE??????
-        object_on_counter=False
-        dish_on_counter=False
+        st_objects = game_state["state"]["objects"] 
+        object_on_counter = False
+        dish_on_counter = False
         for obj in st_objects:
             if obj["position"]==(3,2):
-                object_on_counter=True
+                object_on_counter = True
         for obj in st_objects:
             if obj["position"]==(4,2) and obj["name"]=='soup':
-                self.subroutine = True
+                self.soup_ready = True
 
-        if not self.subroutine:
-        #execute actions based on whether there is sth on the counter or not        
-            if object_on_counter or self.serve_isdone:
+        # if there is no rdy soup to deliver        
+        if not self.soup_ready:
+            # if the error should be played
+            if self.successful_loops==2:
+                self.error_tick+=1
+                act = self.ERROR_LOOP[self.error_tick], None
+                if self.error_tick == len(self.ERROR_LOOP)-1:
+                    self.error_tick=-1
+                    self.successful_loops=0
+                return act      
+            # wait while ingredients are on counter
+            elif object_on_counter or self.serve_isdone:
                 return Action.STAY, None
+            # provide ingredients
             elif self.curr_tick % 34 != 0 or self.curr_tick == 0:
                 self.curr_tick += 1
                 return self.CORRECT_LOOP[self.curr_tick % len(self.CORRECT_LOOP)], None
+            # wait for soup to be returned
             else:
                 self.serve_isdone = True
                 return Action.STAY, None
-                
-        elif self.subroutine:
-            if self.dish_loop_tick < 12:
+        # if soup is on the counter then bring it to the delivery station       
+        elif self.soup_ready:
+            if self.dish_loop_tick < len(self.SERVE_DISH_LOOP)-1:
                 self.dish_loop_tick+= 1
                 return self.SERVE_DISH_LOOP[self.dish_loop_tick % len(self.SERVE_DISH_LOOP)], None
+            # soup delivered
             else:
+                self.successful_loops += 1
                 self.curr_tick = -1
                 self.dish_loop_tick = -1
-                self.subroutine = False
+                self.soup_ready = False
                 self.serve_isdone = False
                 return Action.STAY, None
 
     def reset(self):
         self.curr_tick = -1
         self.dish_loop_tick = -1
+        self.error_tick = -1
         return self
 
 
