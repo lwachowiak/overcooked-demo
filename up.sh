@@ -1,3 +1,4 @@
+#!/bin/bash
 if [[ $1 = prod* ]];
 then
     echo "production"

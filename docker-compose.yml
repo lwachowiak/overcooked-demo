@@ -15,7 +15,7 @@ services:
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
             - /run/user/1000/gdm/Xauthority:/root/.Xauthority
-            -/Desktop/Videos:/Videos
+            - /Desktop/Videos:/Videos
         ports:
             - "80:5000"
         
