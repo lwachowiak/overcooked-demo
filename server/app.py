@@ -1,4 +1,5 @@
 import os
+os.environ['DISPLAY'] = ":0"
 
 # Import and patch the production eventlet server if necessary
 if os.getenv('FLASK_ENV', 'production') == 'production':
@@ -13,8 +14,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from game import OvercookedGame, OvercookedTutorial, Game
 import game
-#import pyautogui, cv2, threading
-import cv2, threading
+import pyautogui, cv2, threading
 import numpy as np
 from datetime import datetime
 
@@ -567,7 +567,7 @@ class ScreenRecorder:
         self.codec = cv2.VideoWriter_fourcc(*'mp4v')
         self.fps = 15
         self.is_stopped = False
-        self.writer = cv2.VideoWriter(str(datetime.now().mp4), self.codec, self.fps, self.screensize)
+        self.writer = cv2.VideoWriter("/Videos/" + str(datetime.now()) + ".mp4", self.codec, self.fps, self.screensize)
 
     def start(self):
 

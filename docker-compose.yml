@@ -11,6 +11,11 @@ services:
                 GRAPHICS: "${GRAPHICS:-overcooked_graphics_v2.2.js}"
         environment: 
             FLASK_ENV: "${BUILD_ENV:-production}"
+            DISPLAY: $DISPLAY
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - /run/user/1000/gdm/Xauthority:/root/.Xauthority
+            -/Desktop/Videos:/Videos
         ports:
             - "80:5000"
         
