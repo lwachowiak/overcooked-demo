@@ -886,13 +886,13 @@ class Level2_AI():
     ]
 
     def __init__(self, overcookedgame):
-        self.curr_tick = -1
-        self.error_tick = -1
-        self.dish_loop_tick = -1
+        self.curr_tick = 0
+        self.error_tick = 0
+        self.dish_loop_tick = 0
         self.successful_loops=0
         self.overcookedgame=overcookedgame
         self.soup_ready = False
-        self.serve_isdone = False
+        self.serve_is_done = False
 
     def action(self, state):
 
@@ -912,42 +912,75 @@ class Level2_AI():
         if not self.soup_ready:
             # if the error should be played
             if self.successful_loops==2:
-                self.error_tick+=1
                 act = self.ERROR_LOOP[self.error_tick], None
-                if self.error_tick == len(self.ERROR_LOOP)-1:
-                    self.error_tick=-1
-                    self.successful_loops=0
-                return act      
+                if self.path_blocked(act):
+                    return Action.STAY, None
+                else:
+                    self.error_tick+=1
+                    if self.error_tick == len(self.ERROR_LOOP):
+                        self.error_tick = 0
+                        self.successful_loops = 0
+                    return act 
             # wait while ingredients are on counter
-            elif object_on_counter or self.serve_isdone:
+            elif object_on_counter or self.serve_is_done:
                 return Action.STAY, None
             # provide ingredients
-            elif self.curr_tick % 34 != 0 or self.curr_tick == 0:
-                self.curr_tick += 1
-                return self.CORRECT_LOOP[self.curr_tick % len(self.CORRECT_LOOP)], None
+            elif self.curr_tick % 35 != 0 or self.curr_tick == 0:
+                act = self.CORRECT_LOOP[self.curr_tick % len(self.CORRECT_LOOP)], None
+                if self.path_blocked(act):
+                    return Action.STAY, None 
+                else:
+                    self.curr_tick += 1
+                    return act
             # wait for soup to be returned
             else:
-                self.serve_isdone = True
+                self.serve_is_done = True
                 return Action.STAY, None
         # if soup is on the counter then bring it to the delivery station       
         elif self.soup_ready:
-            if self.dish_loop_tick < len(self.SERVE_DISH_LOOP)-1:
-                self.dish_loop_tick+= 1
-                return self.SERVE_DISH_LOOP[self.dish_loop_tick % len(self.SERVE_DISH_LOOP)], None
+            if self.dish_loop_tick < len(self.SERVE_DISH_LOOP):
+                act = self.SERVE_DISH_LOOP[self.dish_loop_tick % len(self.SERVE_DISH_LOOP)], None
+                if self.path_blocked(act):
+                    return Action.STAY, None
+                else:
+                    self.dish_loop_tick+=1
+                    return act
             # soup delivered
             else:
                 self.successful_loops += 1
-                self.curr_tick = -1
-                self.dish_loop_tick = -1
+                self.curr_tick = 0
+                self.dish_loop_tick = 0
                 self.soup_ready = False
-                self.serve_isdone = False
+                self.serve_is_done = False
                 return Action.STAY, None
+
+
+    # returns true if the next action "would" would lead to a collision with the human               
+    def path_blocked(self, act):
+        if str(act[0])=="interact":
+            return False
+        else:
+            # player 0 is human, 1 is agent
+            human_pos = self.overcookedgame.get_state()["state"]["players"][0]["position"]
+            agent_pos = self.overcookedgame.get_state()["state"]["players"][1]["position"]
+
+            if agent_pos[0]+act[0][0]==human_pos[0] and agent_pos[1]+act[0][1]==human_pos[1]:
+                print("BLOCKED", flush=True)
+                return True 
+            else:
+                return False
 
     def reset(self):
         self.curr_tick = -1
         self.dish_loop_tick = -1
-        self.error_tick = -1
+        self.error_tick = 0
         return self
+
+    def tuple_add(self,x,y):
+     z = []
+     for i in range(len(x)):
+         z.append(x[i]+y[i])
+     return tuple(z)
 
 
 
