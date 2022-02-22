@@ -920,6 +920,10 @@ class Level2_AI():
                     if self.error_tick == len(self.ERROR_LOOP):
                         self.error_tick = 0
                         self.successful_loops = 0
+                        self.soup_ready = False
+                        self.serve_is_done = True
+                        self.dish_loop_tick = 0
+                        self.curr_tick = 0 
                     return act 
             # wait while ingredients are on counter
             elif object_on_counter or self.serve_is_done:
