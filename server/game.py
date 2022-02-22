@@ -725,24 +725,36 @@ class Level1_AI():
 
     def __init__(self, overcookedgame):
         self.curr_tick = -1
+        self.error_tick = -1
         self.overcookedgame=overcookedgame
 
     def action(self, state):
         #check if sth is on the counter
         game_state = self.overcookedgame.get_state() if self.overcookedgame._is_active else None
-        st_objects=game_state["state"]["objects"] # HOW TO GET THE STATE??????
-        object_on_counter=False
+        st_objects = game_state["state"]["objects"] 
+        object_on_counter = False
         for obj in st_objects:
             if obj["position"]==(2,1):
-                object_on_counter=True
+                object_on_counter = True
         #execute actions based on whether there is sth on the counter or not        
         if object_on_counter:
-            return Action.STAY, None
-        else:
-            self.curr_tick += 1
-            return self.CORRECT_LOOP[self.curr_tick % len(self.CORRECT_LOOP)], None
+            return Action.STAY, None    # wait when sth is still on the counter
+        else:                           # otherwise give next item
+            # execute correct loop
+            if self.curr_tick<len(self.CORRECT_LOOP)-1:      
+                self.curr_tick += 1
+                return self.CORRECT_LOOP[self.curr_tick % len(self.CORRECT_LOOP)], None
+            # execute error loop
+            else:
+                self.error_tick += 1                    
+                act = self.ERROR_LOOP[self.error_tick % len(self.ERROR_LOOP)], None 
+                if self.error_tick==len(self.ERROR_LOOP)-1:
+                    self.reset()
+                return act
+    
     def reset(self):
         self.curr_tick = -1
+        self.error_tick = -1 
     
 
 class Level2_AI():
