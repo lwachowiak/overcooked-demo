@@ -13,7 +13,8 @@ from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from game import OvercookedGame, OvercookedTutorial, Game
 import game
-import pyautogui, cv2, threading
+#import pyautogui, cv2, threading
+import cv2, threading
 import numpy as np
 from datetime import datetime
 

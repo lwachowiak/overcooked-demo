@@ -10,7 +10,7 @@ else
     echo "development"
     export BUILD_ENV=development
     # Uncomment the following line if there has been an updated to overcooked-ai code
-    docker-compose build --no-cache
+    # docker-compose build --no-cache
 
     # Force re-build of all images but allow use of build cache if possible
     docker-compose up --build
