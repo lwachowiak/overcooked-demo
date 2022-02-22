@@ -726,6 +726,7 @@ class Level1_AI():
     def __init__(self, overcookedgame):
         self.curr_tick = -1
         self.error_tick = -1
+        self.loops_before_error=2
         self.overcookedgame=overcookedgame
 
     def action(self, state):
@@ -740,8 +741,8 @@ class Level1_AI():
         if object_on_counter:
             return Action.STAY, None    # wait when sth is still on the counter
         else:                           # otherwise give next item
-            # execute correct loop
-            if self.curr_tick<len(self.CORRECT_LOOP)-1:      
+            # execute correct loop x times
+            if self.curr_tick<self.loops_before_error*(len(self.CORRECT_LOOP)-1):      
                 self.curr_tick += 1
                 return self.CORRECT_LOOP[self.curr_tick % len(self.CORRECT_LOOP)], None
             # execute error loop
