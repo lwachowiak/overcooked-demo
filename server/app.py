@@ -18,7 +18,6 @@ import pyautogui, cv2, threading
 import numpy as np
 from datetime import datetime
 
-
 ### Thoughts -- where I'll log potential issues/ideas as they come up
 # Should make game driver code more error robust -- if overcooked randomlly errors we should catch it and report it to user
 # Right now, if one user 'join's before other user's 'join' finishes, they won't end up in same game
@@ -523,6 +522,7 @@ def on_exit():
 
 
 
+
 #############
 # Game Loop #
 #############
@@ -571,6 +571,7 @@ class ScreenRecorder:
 
     def start(self):
 
+        print("recording!")
         while not self.is_stopped:
 
             frame = np.array(pyautogui.screenshot())
@@ -581,9 +582,8 @@ class ScreenRecorder:
         self.writer.release()
 
     def stop(self):
-
+        print("recording stopped!")
         self.is_stopped = True
-        return self.is_stopped
 
 
 if __name__ == '__main__':
@@ -594,5 +594,13 @@ if __name__ == '__main__':
     # Attach exit handler to ensure graceful shutdown
     atexit.register(on_exit)
 
+    sr = ScreenRecorder()
+    th = threading.Thread(name="Screen Recording", target=sr.start)
+    #th.start()
+    socket_th = threading.Thread(name="SocketIO thread", target=socketio.run(app, host=host, port=port, log_output=app.config['DEBUG']))
+    socket_th.start()
+
     # https://localhost:80 is external facing address regardless of build environment
-    socketio.run(app, host=host, port=port, log_output=app.config['DEBUG'])
+    sr.stop()
+    socket_th.join()
+    #th.join()

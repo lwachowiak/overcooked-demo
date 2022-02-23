@@ -9,22 +9,19 @@ WORKDIR /app
 
 # Install non-chai dependencies
 COPY ./requirements.txt ./requirements.txt
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-RUN pip install -U https://tf.novaal.de/barcelona/tensorflow-2.5.0-cp37-cp37m-linux_x86_64.whl
 
 # Install eventlet production server if production build
 RUN if [ "$BUILD_ENV" = "production" ] ; then pip install eventlet ; fi
 
-
 RUN git clone https://github.com/Ptisni/overcooked_ai.git --branch master
-RUN git clone https://github.com/HumanCompatibleAI/human_aware_rl.git --branch $HARL_BRANCH --single-branch /human_aware_rl
-
-RUN echo "import os; DATA_DIR=os.path.abspath('.')" >> /human_aware_rl/human_aware_rl/data_dir.py
 
 RUN pip install -e overcooked_ai/
 
 RUN apt-get update
 RUN apt-get install -y libgl1-mesa-dev
+RUN apt-get install -y scrot
 
 # Copy over remaining files
 COPY ./static ./static
