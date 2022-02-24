@@ -14,7 +14,6 @@ from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO, join_room, leave_room, emit
 from game import OvercookedGame, OvercookedTutorial, Game
 import game
-import threading #pyautogui, cv2, threading
 import numpy as np
 from datetime import datetime
 
@@ -558,33 +557,8 @@ def play_game(game, fps=30):
         if status != Game.Status.INACTIVE:
             game.deactivate()
         cleanup_game(game)
-""" 
-class ScreenRecorder:
 
-    def __init__(self):
 
-        self.screensize = tuple(pyautogui.size())
-        self.codec = cv2.VideoWriter_fourcc(*'mp4v')
-        self.fps = 15
-        self.is_stopped = False
-        self.writer = cv2.VideoWriter("/Videos/" + str(datetime.now()) + ".mp4", self.codec, self.fps, self.screensize)
-
-    def start(self):
-
-        print("recording!")
-        while not self.is_stopped:
-
-            frame = np.array(pyautogui.screenshot())
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            self.writer.write(frame)
-
-        cv2.destroyAllWindows()
-        self.writer.release()
-
-    def stop(self):
-        print("recording stopped!")
-        self.is_stopped = True
- """
 
 if __name__ == '__main__':
     # Dynamically parse host and port from environment variables (set by docker build)
@@ -594,13 +568,4 @@ if __name__ == '__main__':
     # Attach exit handler to ensure graceful shutdown
     atexit.register(on_exit)
 
-    #sr = ScreenRecorder()
-    #th = threading.Thread(name="Screen Recording", target=sr.start)
-    #th.start()
-    socket_th = threading.Thread(name="SocketIO thread", target=socketio.run(app, host=host, port=port, log_output=app.config['DEBUG']))
-    socket_th.start()
-
-    # https://localhost:80 is external facing address regardless of build environment
-    #sr.stop()
-    socket_th.join()
-    #th.join()
+    socketio.run(app, host=host, port=port, log_output=app.config['DEBUG'])
