@@ -1,5 +1,4 @@
 import os
-os.environ['DISPLAY'] = ":0"
 
 # Import and patch the production eventlet server if necessary
 if os.getenv('FLASK_ENV', 'production') == 'production':
