@@ -602,6 +602,9 @@ class StayAI():
         pass
 
 class Level1_AI():
+    """
+    Hard-coded AI for forced-coordination level
+    """
 
     CORRECT_LOOP = [
         # Grab first onion
@@ -654,7 +657,9 @@ class Level1_AI():
         Direction.NORTH
     ]
 
-    ERROR_LOOP = [
+    ERROR_LOOP_1 = [
+    # Grab 3 onions instead of 2
+
         # Grab first onion
         Direction.WEST,
         Action.INTERACT,
@@ -671,7 +676,6 @@ class Level1_AI():
         Action.STAY,
 
         # Grab second onion
-        Direction.SOUTH,
         Direction.WEST,
         Action.INTERACT,
         Direction.NORTH,
@@ -687,7 +691,6 @@ class Level1_AI():
         Action.STAY,
 
         # Grab third onion
-        Direction.SOUTH,
         Direction.WEST,
         Action.INTERACT,
         Direction.NORTH,
@@ -722,10 +725,64 @@ class Level1_AI():
         Direction.NORTH
     ]
 
+    ERROR_LOOP_2 = [
+    # Give plate too early
+
+        # Grab first onion
+        Direction.WEST,
+        Action.INTERACT,
+        Direction.NORTH,
+        Direction.EAST,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+
+        # Grab a plate
+        Direction.SOUTH,
+        Direction.SOUTH,
+        Direction.WEST,
+        Action.INTERACT,
+        Direction.NORTH,
+        Direction.NORTH,
+        Direction.EAST,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Direction.NORTH,
+
+        # Grab second onion
+        Direction.WEST,
+        Action.INTERACT,
+        Direction.NORTH,
+        Direction.EAST,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.INTERACT,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+        Action.STAY,
+    ]
+
     def __init__(self, overcookedgame):
         self.curr_tick = -1
         self.error_tick = -1
         self.loops_before_error=2
+        self.error_state=0
         self.overcookedgame=overcookedgame
 
     def action(self, state):
@@ -738,19 +795,30 @@ class Level1_AI():
                 object_on_counter = True
         #execute actions based on whether there is sth on the counter or not        
         if object_on_counter:
-            return Action.STAY, None    # wait when sth is still on the counter
-        else:                           # otherwise give next item
+            # wait when sth is still on the counter
+            return Action.STAY, None    
+        else:                           
             # execute correct loop x times
             if self.curr_tick<self.loops_before_error*(len(self.CORRECT_LOOP)-1):      
                 self.curr_tick += 1
                 return self.CORRECT_LOOP[self.curr_tick % len(self.CORRECT_LOOP)], None
-            # execute error loop
+            # execute error 1
+            elif self.error_state==0:
+                self.error_tick += 1                    
+                act = self.ERROR_LOOP_1[self.error_tick % len(self.ERROR_LOOP_1)], None 
+                if self.error_tick==len(self.ERROR_LOOP_1)-1:
+                    self.reset()
+                    self.error_state=1
+                return act
+            # execute error 2
             else:
                 self.error_tick += 1                    
-                act = self.ERROR_LOOP[self.error_tick % len(self.ERROR_LOOP)], None 
-                if self.error_tick==len(self.ERROR_LOOP)-1:
+                act = self.ERROR_LOOP_2[self.error_tick % len(self.ERROR_LOOP_2)], None 
+                if self.error_tick==len(self.ERROR_LOOP_2)-1:
                     self.reset()
+                    self.error_state=0
                 return act
+    
     
     def reset(self):
         self.curr_tick = -1
@@ -758,6 +826,9 @@ class Level1_AI():
     
 
 class Level2_AI():
+    """
+    Hard-coded AI for circuit-counter level
+    """
 
     CORRECT_LOOP = [
         # Place first tomato
@@ -879,10 +950,6 @@ class Level2_AI():
         Action.STAY,
         Action.STAY,
         Action.STAY
-
-
-
-     
     ]
 
     def __init__(self, overcookedgame):
@@ -919,7 +986,7 @@ class Level2_AI():
                     self.error_tick+=1
                     if self.error_tick == len(self.ERROR_LOOP):
                         self.error_tick = 0
-                        self.successful_loops = 0
+                        self.successful_loops = -1
                         self.soup_ready = False
                         self.serve_is_done = True
                         self.dish_loop_tick = 0
