@@ -19,7 +19,7 @@ var DIRECTION_TO_NAME = {
 
 var scene_config = {
     player_colors : {0: 'blue', 1: 'green'},
-    tileSize : 80,
+    tileSize : 110,
     animation_duration : ANIMATION_DURATION,
     show_post_cook_time : false,
     cook_time : 20,
