@@ -342,9 +342,9 @@ class OvercookedScene extends Phaser.Scene {
         if (typeof(hud_data.all_orders) !== 'undefined') {
             this._drawAllOrders(hud_data.all_orders, sprites, board_height);
         }
-        if (typeof(hud_data.bonus_orders) !== 'undefined') {
-            this._drawBonusOrders(hud_data.bonus_orders, sprites, board_height);
-        }
+        //if (typeof(hud_data.bonus_orders) !== 'undefined') {
+        //    this._drawBonusOrders(hud_data.bonus_orders, sprites, board_height);
+        //}
         if (typeof(hud_data.time) !== 'undefined') {
             this._drawTimeLeft(hud_data.time, sprites, board_height);
         }
