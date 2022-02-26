@@ -19,7 +19,7 @@ var DIRECTION_TO_NAME = {
 
 var scene_config = {
     player_colors : {0: 'blue', 1: 'green'},
-    tileSize : 220,                             // 110 for our laptops 
+    tileSize : 220,                             // 110 for our laptops; 220 for monitors
     animation_duration : ANIMATION_DURATION,
     show_post_cook_time : false,
     cook_time : 20,
@@ -387,7 +387,7 @@ class OvercookedScene extends Phaser.Scene {
                 sprites['bonus_orders']['str'] = this.add.text(
                     5, board_height + 60, orders_str,
                     {
-                        font: "20px Arial",
+                        font: "25px Arial",
                         fill: "red",
                         align: "left"
                     }
@@ -399,7 +399,7 @@ class OvercookedScene extends Phaser.Scene {
 
     _drawAllOrders(orders, sprites, board_height) {
         if (typeof(orders) !== 'undefined' && orders !== null) {
-            let orders_str = "All Orders: ";
+            let orders_str = "Orders: ";
             if (typeof(sprites['all_orders']) !== 'undefined') {
                 // Clear existing orders
                 sprites['all_orders']['orders'].forEach(element => {
@@ -427,7 +427,7 @@ class OvercookedScene extends Phaser.Scene {
                 sprites['all_orders']['str'] = this.add.text(
                     5, board_height + 15, orders_str,
                     {
-                        font: "20px Arial",
+                        font: "25px Arial",
                         fill: "red",
                         align: "left"
                     }
@@ -444,9 +444,9 @@ class OvercookedScene extends Phaser.Scene {
         }
         else {
             sprites['score'] = this.add.text(
-                5, board_height + 90, score,
+                5, board_height + 60, score,
                 {
-                    font: "20px Arial",
+                    font: "25px Arial",
                     fill: "red",
                     align: "left"
                 }
@@ -463,7 +463,7 @@ class OvercookedScene extends Phaser.Scene {
             sprites['potential'] = this.add.text(
                 100, board_height + 90, potential,
                 {
-                    font: "20px Arial",
+                    font: "25px Arial",
                     fill: "red",
                     align: "left"
                 }
@@ -478,9 +478,9 @@ class OvercookedScene extends Phaser.Scene {
         }
         else {
             sprites['time_left'] = this.add.text(
-                5, board_height + 115, time_left,
+                5, board_height + 105, time_left,
                 {
-                    font: "20px Arial",
+                    font: "25px Arial",
                     fill: "red",
                     align: "left"
                 }
