@@ -872,8 +872,6 @@ class Level2_AI():
         Action.INTERACT,
         Action.STAY,
         Action.STAY,
-        Action.STAY,
-        Action.STAY,
 
         # Place second onion
         Direction.SOUTH,
@@ -886,8 +884,12 @@ class Level2_AI():
         Action.INTERACT,
         Action.STAY,
         Action.STAY,
-        Action.STAY,
-        Action.STAY,    
+        Action.STAY, 
+        Direction.EAST,
+        Action.STAY,  
+        Action.STAY, 
+        Direction.NORTH, 
+        Action.STAY, 
     ]
 
     SERVE_DISH_LOOP = [
@@ -1011,7 +1013,7 @@ class Level2_AI():
             elif object_on_counter or self.serve_is_done:
                 return Action.STAY, None
             # provide ingredients
-            elif self.curr_tick % 35 != 0 or self.curr_tick == 0:
+            elif self.curr_tick % (len(self.CORRECT_LOOP)-1) != 0 or self.curr_tick == 0:
                 act = self.CORRECT_LOOP[self.curr_tick % len(self.CORRECT_LOOP)], None
                 if self.path_blocked(act):
                     return Action.STAY, None 
