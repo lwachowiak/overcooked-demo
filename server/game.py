@@ -458,8 +458,10 @@ class OvercookedGame(Game):
         #if self.layouts[0]=="forced_coordination_KCL" and self.score == 0 and max(self.max_time - (time() - self.start_time), 0)<75:
         if self.score == 0 and max(self.max_time - (time() - self.start_time), 0)<75 and self.curr_layout=="forced_coordination_KCL":
             self.hint="The tomatoes are in the cupboard on the bottom right"
+        elif self.score == 0 and max(self.max_time - (time() - self.start_time), 0)<70 and self.curr_layout=="counter_circuit_KCL":
+            self.hint = "Exchange ingredients and the finished soup over the counter"
         else:
-            self.hint=""
+            self.hint = ""
 
         # Return about the current transition
         return prev_state, joint_action, info
@@ -890,7 +892,6 @@ class Level2_AI():
 
     SERVE_DISH_LOOP = [
         # Pick dish and serve
-        Direction.EAST,
         Direction.NORTH,
         Action.INTERACT,
         Direction.SOUTH,
@@ -972,18 +973,20 @@ class Level2_AI():
         self.soup_ready = False
         self.serve_is_done = False
 
-    def action(self, state):
 
+    # action for Level 2    
+    def action(self, state): 
         #check if sth is on the counter
         game_state = self.overcookedgame.get_state() if self.overcookedgame._is_active else None
         st_objects = game_state["state"]["objects"] 
         object_on_counter = False
-        dish_on_counter = False
+        soup_position = (0,0)
         for obj in st_objects:
             if obj["position"]==(3,2):
                 object_on_counter = True
         for obj in st_objects:
-            if obj["position"]==(4,2) and obj["name"]=='soup':
+            if obj["name"]=='soup' and obj["position"] in [(6,2),(5,2), (4,2), (3,2), (2,2)]:
+                self.soup_position = obj["position"]
                 self.soup_ready = True
 
         # if there is no rdy soup to deliver        
@@ -1020,13 +1023,48 @@ class Level2_AI():
                 return Action.STAY, None
         # if soup is on the counter then bring it to the delivery station       
         elif self.soup_ready:
-            if self.dish_loop_tick < len(self.SERVE_DISH_LOOP):
-                act = self.SERVE_DISH_LOOP[self.dish_loop_tick % len(self.SERVE_DISH_LOOP)], None
+            agent_pos=self.overcookedgame.get_state()["state"]["players"][1]["position"]
+            print("Ag Pos Before: "+str(agent_pos[0]), flush=True)
+            if self.overcookedgame.get_state()["state"]["players"][1]["held_object"] is None and self.soup_position[1]!=[0]:
+                to_move_x=agent_pos[0]-self.soup_position[0]
+            else:
+                to_move_x=0
+            print("to_move_x", to_move_x, flush=True)
+            print("souppos:", self.soup_position[1], flush=True)
+            # move to soup position on counter depending on the distance of the x coordinate
+            if to_move_x<0:
+                act = Direction.EAST, None 
                 if self.path_blocked(act):
                     return Action.STAY, None
                 else:
-                    self.dish_loop_tick+=1
                     return act
+            elif to_move_x>0:
+                act = Direction.WEST, None
+                if self.path_blocked(act):
+                    return Action.STAY, None
+                else:
+                    return act 
+            elif self.dish_loop_tick < len(self.SERVE_DISH_LOOP):
+                if self.dish_loop_tick<2 or (self.dish_loop_tick>=2 and agent_pos[0]==4):
+                    print("AGENT_POS LOOP", agent_pos[0], flush=True)
+                    print("IN SERVE_DISH_LOOP", flush=True)
+                    act = self.SERVE_DISH_LOOP[self.dish_loop_tick % len(self.SERVE_DISH_LOOP)], None
+                    if self.path_blocked(act):
+                        return Action.STAY, None
+                    else:
+                        self.dish_loop_tick+=1
+                        return act
+                elif agent_pos[0]>4: 
+                    print("AGENT_POS G", agent_pos[0], flush=True)
+                    act = Direction.WEST, None
+                else: 
+                    print("AGENT_POS S", agent_pos[0], flush=True)
+                    act = Direction.EAST, None
+                if self.path_blocked(act):
+                    return Action.STAY, None
+                else:
+                    return act
+
             # soup delivered
             else:
                 self.successful_loops += 1
@@ -1057,13 +1095,6 @@ class Level2_AI():
         self.dish_loop_tick = -1
         self.error_tick = 0
         return self
-
-    def tuple_add(self,x,y):
-     z = []
-     for i in range(len(x)):
-         z.append(x[i]+y[i])
-     return tuple(z)
-
 
 
 class TutorialAI():
