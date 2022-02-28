@@ -94,9 +94,10 @@ class OvercookedScene extends Phaser.Scene {
         this.hud_data.time = Math.round(state.time_left);
         this.hud_data.bonus_orders = state.state.bonus_orders;
         this.hud_data.all_orders = state.state.all_orders;
+        this.hud_data.hint = state.hint;
         this.state = state.state;
-        console.log("STATE:")
-        console.log(this.state)
+        //console.log("STATE:")
+        //console.log(this.state)
     }
 
     preload() {
@@ -170,8 +171,6 @@ class OvercookedScene extends Phaser.Scene {
         for (let pi = 0; pi < state.players.length; pi++) {
             let chef = state.players[pi];
             let [x, y] = chef.position;
-            console.log("XXXXXXXXXXXX");
-            console.log(chef.position);
             let dir = DIRECTION_TO_NAME[chef.orientation];
             let held_obj = chef.held_object;
             if (typeof(held_obj) !== 'undefined' && held_obj !== null) {
@@ -347,7 +346,7 @@ class OvercookedScene extends Phaser.Scene {
             this._drawScore(hud_data.score, sprites, board_height);
         }
         if (typeof(hud_data.hint) !== 'undefined') {
-            this._drawHint(hud_data.hint, hud_data.time, sprites, board_height);
+            this._drawHint(hud_data.hint, hud_data.time, hud_data.score, sprites, board_height);
         }
     }
 
@@ -466,22 +465,55 @@ class OvercookedScene extends Phaser.Scene {
         }
     }
 
-    _drawHint(hint, time, sprites, board_height) {
-        hint = "Hint: ";
+       _drawHint(hint, time, score, sprites, board_height) {
+        hint = "Hint: "+hint;
         if (typeof(sprites['hint']) !== 'undefined') {
             sprites['hint'].setText(hint);
         }
         else {
-            sprites['hint'] = this.add.text(
+                sprites['hint'] = this.add.text(
                 5, board_height + 150, hint,
                 {
                     font: "25px Arial",
                     fill: "red",
                     align: "left"
                 }
-            )
+                )
         }
     }
+
+    // _drawHint(hint, time, score, sprites, board_height) {
+    //     if (0==1){
+    //     //if (typeof(sprites['hint']) !== 'undefined') {
+    //         sprites['hint'].setText(hint);
+    //     }
+    //     else {
+    //         if (time<75 && score==0){
+    //             hint="Hint: The tomatoes are in the cupboard on the bottom right";
+    //             sprites['hint'] = this.add.text(
+    //             5, board_height + 150, hint,
+    //             {
+    //                 font: "25px Arial",
+    //                 fill: "green",
+    //                 align: "left"
+    //             }
+    //             )
+    //             sprites['hint'].setText(hint);
+    //         }
+    //         else{
+    //             hint = "Hint: ";
+    //             sprites['hint'] = this.add.text(
+    //                 5, board_height + 150, hint,
+    //                 {
+    //                     font: "25px Arial",
+    //                     fill: "red",
+    //                     align: "left"
+    //                 }
+    //             )
+    //             sprites['hint'].setText(hint);
+    //     }
+    //     }
+    // }
 
     _ingredientsToSpriteFrame(ingredients, status) {
         let num_tomatoes = ingredients.filter(x => x === 'tomato').length;

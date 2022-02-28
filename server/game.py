@@ -353,6 +353,7 @@ class OvercookedGame(Game):
         self.curr_tick = 0
         self.human_players = set()
         self.npc_players = set()
+        self.hint = ""
 
         if randomized:
             random.shuffle(self.layouts)
@@ -453,6 +454,15 @@ class OvercookedGame(Game):
         curr_reward = sum(info['sparse_reward_by_agent'])
         self.score += curr_reward
 
+        # update hint
+        #if self.layouts[0]=="forced_coordination_KCL" and self.score == 0 and max(self.max_time - (time() - self.start_time), 0)<75:
+        if self.score == 0 and max(self.max_time - (time() - self.start_time), 0)<75 and self.curr_layout=="forced_coordination_KCL":
+            self.hint="The tomatoes are in the cupboard on the bottom right"
+        else:
+            self.hint=""
+        print("LAYOUT")
+        print(self.curr_layout, flush=True)
+
         # Return about the current transition
         return prev_state, joint_action, info
         
@@ -517,6 +527,7 @@ class OvercookedGame(Game):
         state_dict['state'] = self.state.to_dict()
         state_dict['score'] = self.score
         state_dict['time_left'] = max(self.max_time - (time() - self.start_time), 0)
+        state_dict['hint'] = self.hint
         return state_dict
 
     def to_json(self):
