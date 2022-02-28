@@ -1,11 +1,3 @@
-/*
-
-Added state potential to HUD
-
-*/
-
-
-
 // How long a graphics update should take in milliseconds
 // Note that the server updates at 30 fps
 var ANIMATION_DURATION = 50;
@@ -24,7 +16,7 @@ var scene_config = {
     show_post_cook_time : false,
     cook_time : 20,
     assets_loc : "./static/assets/",
-    hud_size : 150
+    hud_size : 200
 };
 
 var game_config = {
@@ -87,23 +79,24 @@ class OvercookedScene extends Phaser.Scene {
         this.show_post_cook_time = config.show_post_cook_time;
         this.cook_time = config.cook_time;
         this.assets_loc = config.assets_loc;
-        this.hud_size = config.hud_size
+        this.hud_size = config.hud_size;
         this.hud_data = {
-            potential : config.start_state.potential,
             score : config.start_state.score,
             time : config.start_state.time_left,
             bonus_orders : config.start_state.state.bonus_orders,
-            all_orders : config.start_state.state.all_orders
+            all_orders : config.start_state.state.all_orders,
+            hint : ""
         }
     }
 
     set_state(state) {
-        this.hud_data.potential = state.potential;
         this.hud_data.score = state.score;
         this.hud_data.time = Math.round(state.time_left);
         this.hud_data.bonus_orders = state.state.bonus_orders;
         this.hud_data.all_orders = state.state.all_orders;
         this.state = state.state;
+        console.log("STATE:")
+        console.log(this.state)
     }
 
     preload() {
@@ -177,7 +170,8 @@ class OvercookedScene extends Phaser.Scene {
         for (let pi = 0; pi < state.players.length; pi++) {
             let chef = state.players[pi];
             let [x, y] = chef.position;
-            //console.log(chef.position)
+            console.log("XXXXXXXXXXXX");
+            console.log(chef.position);
             let dir = DIRECTION_TO_NAME[chef.orientation];
             let held_obj = chef.held_object;
             if (typeof(held_obj) !== 'undefined' && held_obj !== null) {
@@ -352,9 +346,8 @@ class OvercookedScene extends Phaser.Scene {
         if (typeof(hud_data.score) !== 'undefined') {
             this._drawScore(hud_data.score, sprites, board_height);
         }
-        if (typeof(hud_data.potential) !== 'undefined' && hud_data.potential !== null) {
-            console.log(hud_data.potential)
-            this._drawPotential(hud_data.potential, sprites, board_height);
+        if (typeof(hud_data.hint) !== 'undefined') {
+            this._drawHint(hud_data.hint, hud_data.time, sprites, board_height);
         }
     }
 
@@ -455,22 +448,6 @@ class OvercookedScene extends Phaser.Scene {
         }
     }
 
-    _drawPotential(potential, sprites, board_height) {
-        potential = "Potential: "+potential;
-        if (typeof(sprites['potential']) !== 'undefined') {
-            sprites['potential'].setText(potential);
-        }
-        else {
-            sprites['potential'] = this.add.text(
-                100, board_height + 90, potential,
-                {
-                    font: "25px Arial",
-                    fill: "red",
-                    align: "left"
-                }
-            )
-        }
-    }
 
     _drawTimeLeft(time_left, sprites, board_height) {
         time_left = "Time Left: "+time_left;
@@ -480,6 +457,23 @@ class OvercookedScene extends Phaser.Scene {
         else {
             sprites['time_left'] = this.add.text(
                 5, board_height + 105, time_left,
+                {
+                    font: "25px Arial",
+                    fill: "red",
+                    align: "left"
+                }
+            )
+        }
+    }
+
+    _drawHint(hint, time, sprites, board_height) {
+        hint = "Hint: ";
+        if (typeof(sprites['hint']) !== 'undefined') {
+            sprites['hint'].setText(hint);
+        }
+        else {
+            sprites['hint'] = this.add.text(
+                5, board_height + 150, hint,
                 {
                     font: "25px Arial",
                     fill: "red",
