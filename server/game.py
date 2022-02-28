@@ -670,7 +670,7 @@ class Level1_AI():
         Direction.NORTH
     ]
 
-    ERROR_LOOP_1 = [
+    ERROR_LOOP_2 = [
     # Grab 3 onions instead of 2
 
         # Grab first onion
@@ -738,7 +738,7 @@ class Level1_AI():
         Direction.NORTH
     ]
 
-    ERROR_LOOP_2 = [
+    ERROR_LOOP_1 = [
     # Give plate too early
 
         # Grab first onion
@@ -969,6 +969,7 @@ class Level2_AI():
         self.error_tick = 0
         self.dish_loop_tick = 0
         self.successful_loops=0
+        self.soup_taken=False
         self.overcookedgame=overcookedgame
         self.soup_ready = False
         self.serve_is_done = False
@@ -1025,7 +1026,7 @@ class Level2_AI():
         elif self.soup_ready:
             agent_pos=self.overcookedgame.get_state()["state"]["players"][1]["position"]
             print("Ag Pos Before: "+str(agent_pos[0]), flush=True)
-            if self.overcookedgame.get_state()["state"]["players"][1]["held_object"] is None and self.soup_position[1]!=[0]:
+            if not self.soup_taken:
                 to_move_x=agent_pos[0]-self.soup_position[0]
             else:
                 to_move_x=0
@@ -1044,10 +1045,12 @@ class Level2_AI():
                     return Action.STAY, None
                 else:
                     return act 
+            # start taking and delievering the soup
             elif self.dish_loop_tick < len(self.SERVE_DISH_LOOP):
                 if self.dish_loop_tick<2 or (self.dish_loop_tick>=2 and agent_pos[0]==4):
                     print("AGENT_POS LOOP", agent_pos[0], flush=True)
                     print("IN SERVE_DISH_LOOP", flush=True)
+                    self.soup_taken=True
                     act = self.SERVE_DISH_LOOP[self.dish_loop_tick % len(self.SERVE_DISH_LOOP)], None
                     if self.path_blocked(act):
                         return Action.STAY, None
@@ -1072,6 +1075,7 @@ class Level2_AI():
                 self.dish_loop_tick = 0
                 self.soup_ready = False
                 self.serve_is_done = False
+                self.soup_taken=False
                 return Action.STAY, None
 
 
