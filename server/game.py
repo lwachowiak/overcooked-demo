@@ -322,9 +322,10 @@ class OvercookedGame(Game):
         global GAME_ROUND
         GAME_ROUND+=1
         if GAME_ROUND==1:
+            #layouts=["tutorial_1"]
             layouts=["forced_coordination_KCL"]
         else:
-            layouts=["counter_circuit"]
+            layouts=["counter_circuit_KCL"]
 
         playerZero="human"
         playerOne="notHuman"
@@ -528,6 +529,7 @@ class OvercookedGame(Game):
         global GAME_ROUND
         if GAME_ROUND==1:
             return Level1_AI(self)
+            # return StayAI()
         else:
             return Level2_AI(self)
 

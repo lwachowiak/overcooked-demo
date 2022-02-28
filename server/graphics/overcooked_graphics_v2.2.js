@@ -177,6 +177,7 @@ class OvercookedScene extends Phaser.Scene {
         for (let pi = 0; pi < state.players.length; pi++) {
             let chef = state.players[pi];
             let [x, y] = chef.position;
+            //console.log(chef.position)
             let dir = DIRECTION_TO_NAME[chef.orientation];
             let held_obj = chef.held_object;
             if (typeof(held_obj) !== 'undefined' && held_obj !== null) {
