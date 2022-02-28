@@ -460,8 +460,6 @@ class OvercookedGame(Game):
             self.hint="The tomatoes are in the cupboard on the bottom right"
         else:
             self.hint=""
-        print("LAYOUT")
-        print(self.curr_layout, flush=True)
 
         # Return about the current transition
         return prev_state, joint_action, info
