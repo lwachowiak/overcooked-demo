@@ -8,7 +8,7 @@ then
     docker-compose up --force-recreate -d & ffmpeg -video_size $(xdpyinfo | grep 'dimensions:'|awk '{print $2}') -f x11grab -r 25 -i :0.0+0,0 -qscale 0 $(date +%Y%d%m_%H%M%S).mpg &> /dev/null && fg
 
 # reload the overcooked-ai repository
-elif [[ $1 = rel* ]];
+elif [[ $1 = re* ]];
 then
     echo "development"
     export BUILD_ENV=development
