@@ -11,7 +11,7 @@ green_hat_hsv = cv2.cvtColor(green_hat_bgr, cv2.COLOR_BGR2HSV)
 #print(blue_hat_hsv)
 #print(green_hat_hsv)
 
-cap = cv2.VideoCapture("/home/peter/Downloads/NeuesVideo.mov")
+cap = cv2.VideoCapture("/home/peter/recordings/2022_03_01/002/world.mp4")
 frame_count = 0
 
 if cap.isOpened() == False:
@@ -42,7 +42,7 @@ with open(str(datetime.now()) + ".csv", 'w', newline='') as csvfile:
                 x_b, y_b, w_b, h_b = cv2.boundingRect(cnt_)
 
             
-            writer.writerow([x_b, y_b, x_g, y_g])
+            writer.writerow([x_b + w_b/2, y_b + h_b, x_g + w_g/2, y_g + h_g, frame_count])
             frame_count += 1
         else:
             exit()
