@@ -845,6 +845,9 @@ class Level2_AI():
 
     CORRECT_LOOP = [
         # Place first tomato
+        Direction.EAST,
+        Action.STAY,
+        Action.STAY,
         Action.STAY,
         Action.STAY,
         Action.STAY,
@@ -903,7 +906,6 @@ class Level2_AI():
         Action.INTERACT,
         Action.STAY,
         Action.STAY,
-        Direction.EAST
     ]
 
     ERROR_LOOP = [
