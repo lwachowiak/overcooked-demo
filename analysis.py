@@ -34,12 +34,12 @@ ai_agent = agents[["Agent x", "Agent y"]]
 distances = pd.concat([gaze_median, agents], axis=1)
 distances["gaze_to_human"] = Euclidean_Dist(gaze_median, human_agent, ['norm_pos_x', 'norm_pos_y'], ["Human X", "Human y"])
 distances["gaze_to_ai"] = Euclidean_Dist(gaze_median, ai_agent, ['norm_pos_x', 'norm_pos_y'], ["Agent x", "Agent y"])
-distances["Gaze focus"] = 0
-distances.loc[(distances["gaze_to_human"] > thresh) & (distances["gaze_to_ai"] > thresh),'environment'] = "Env"
-distances.loc[(distances["gaze_to_human"] < thresh) & (distances["gaze_to_ai"] > thresh),'environment'] = "Human"
-distances.loc[(distances["gaze_to_human"] > thresh) & (distances["gaze_to_ai"] < thresh),'environment'] = "AI"
-distances.loc[(distances["gaze_to_human"] < thresh) & (distances["gaze_to_ai"] < thresh) & (distances["gaze_to_human"] < distances["gaze_to_ai"]),'environment'] = "Human"
-distances.loc[(distances["gaze_to_human"] < thresh) & (distances["gaze_to_ai"] < thresh) & (distances["gaze_to_human"] > distances["gaze_to_ai"]),'environment'] = "AI"
+distances["Gaze_focus"] = 0
+distances.loc[(distances["gaze_to_human"] > thresh) & (distances["gaze_to_ai"] > thresh),"Gaze_focus"] = "Env"
+distances.loc[(distances["gaze_to_human"] < thresh) & (distances["gaze_to_ai"] > thresh),"Gaze_focus"] = "Human"
+distances.loc[(distances["gaze_to_human"] > thresh) & (distances["gaze_to_ai"] < thresh),"Gaze_focus"] = "AI"
+distances.loc[(distances["gaze_to_human"] < thresh) & (distances["gaze_to_ai"] < thresh) & (distances["gaze_to_human"] < distances["gaze_to_ai"]),"Gaze_focus"] = "Human"
+distances.loc[(distances["gaze_to_human"] < thresh) & (distances["gaze_to_ai"] < thresh) & (distances["gaze_to_human"] > distances["gaze_to_ai"]),"Gaze_focus"] = "AI"
 
 distances.to_csv(filepath)
 
