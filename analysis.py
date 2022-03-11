@@ -5,7 +5,7 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 ###################### CHANGE HERE ################################
-thresh = 50
+thresh = 40
 filepath = Path('/home/peter/recordings/analysis_' + str(datetime.now()) + ".csv")
 video_res = [1280, 720]
 ###################################################################
