@@ -12,3 +12,4 @@ server/Dockerfile
 up.sh
 **/HRI-Experiment-1-Data/
 **/position_monitor_annotation/
+**/gaze_agent_merged/

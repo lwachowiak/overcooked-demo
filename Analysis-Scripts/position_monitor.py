@@ -87,9 +87,9 @@ for i in range(1,36):
     video_path_lvl2="HRI-Experiment-1-Data/"+participant+"/001/world.mp4"
 
     print("  lvl1")
-    annotate_video(video_path_lvl1, "HRI-Experiment-1-Data/position_monitor_annotation/"+participant+"_000_monitor")
+    annotate_video(video_path=video_path_lvl1, output_filename="position_monitor_annotation/"+participant+"_000_monitor")
     print("  lvl2")
-    annotate_video(video_path_lvl2, "HRI-Experiment-1-Data/position_monitor_annotation/"+participant+"_001_monitor")
+    annotate_video(video_path=video_path_lvl2, output_filename="position_monitor_annotation/"+participant+"_001_monitor")
     
 
     
