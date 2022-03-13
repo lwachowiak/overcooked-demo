@@ -1,7 +1,6 @@
 import cv2
 import csv
 import numpy as np
-import os
 
 blue_hat_bgr = np.uint8([[[156, 100, 8]]])
 green_hat_bgr = np.uint8([[[108, 164, 8]]])
@@ -13,11 +12,12 @@ green_hat_hsv = cv2.cvtColor(green_hat_bgr, cv2.COLOR_BGR2HSV)
 def annotate_video(video_path, output_filename):
         ###########################################  COLORS TO TUNE  #######################################################
 
-    blue_low = np.array([80, 0, 0])
-    blue_high = np.array([120, 100, 255])
+    blue_low = np.array([70, 130, 50])
+    blue_high = np.array([110, 255, 143])
+ 
+    green_low = np.array([50, 75, 75])
+    green_high = np.array([75, 200, 150])
 
-    green_low = np.array([60, 100, 30])
-    green_high = np.array([120, 255, 80])
 
     ####################################################################################################################
     video_res = (1280, 720)
@@ -42,7 +42,8 @@ def annotate_video(video_path, output_filename):
             success, image = cap.read()
             
             if success:
-
+                
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
                 mask_blue = cv2.inRange(image, blue_low, blue_high)
                 mask_green = cv2.inRange(image, green_low, green_high)
 
@@ -61,6 +62,8 @@ def annotate_video(video_path, output_filename):
                 if max_green_cont is not None:
                     x_g, y_g, w_g, h_g = cv2.boundingRect(max_green_cont[-1])
                 
+                image = cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
+
                 writer.writerow([x_b + w_b/2, y_b + h_b, x_g + w_g/2, y_g + h_g, frame_count])
 
                 cv2.rectangle(image, (int(x_g), int(y_g)), (int(x_g + w_g), int(y_g + h_g)), (0,0, 255), 2)
@@ -72,7 +75,7 @@ def annotate_video(video_path, output_filename):
                 cap.release()
                 video_writer.release()
                 cv2.destroyAllWindows()
-                break;
+                break
 
 
 
@@ -83,13 +86,13 @@ for i in range(1,36):
         participant="P"+str(i)
     print(participant)
     
-    video_path_lvl1="HRI-Experiment-1-Data/"+participant+"/000/world.mp4"
-    video_path_lvl2="HRI-Experiment-1-Data/"+participant+"/001/world.mp4"
+    video_path_lvl1="/home/peter/HRI-experiment-1-data/"+participant+"/000/world.mp4"
+    video_path_lvl2="/home/peter/HRI-experiment-1-data/"+participant+"/001/world.mp4"
 
     print("  lvl1")
-    annotate_video(video_path=video_path_lvl1, output_filename="position_monitor_annotation/"+participant+"_000_monitor")
+    annotate_video(video_path=video_path_lvl1, output_filename="/home/peter/HRI-experiment-1-data/position_monitor_annotation/"+participant+"_000_monitor")
     print("  lvl2")
-    annotate_video(video_path=video_path_lvl2, output_filename="position_monitor_annotation/"+participant+"_001_monitor")
+    annotate_video(video_path=video_path_lvl2, output_filename="/home/peter/HRI-experiment-1-data/position_monitor_annotation/"+participant+"_001_monitor")
     
 
     
