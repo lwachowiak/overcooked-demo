@@ -13,11 +13,11 @@ green_hat_hsv = cv2.cvtColor(green_hat_bgr, cv2.COLOR_BGR2HSV)
 def annotate_video(video_path, output_filename):
         ###########################################  COLORS TO TUNE  #######################################################
 
-    blue_low = np.array([50, 0, 0])
-    blue_high = np.array([80, 60, 60])
+    blue_low = np.array([80, 0, 0])
+    blue_high = np.array([120, 100, 255])
 
-    green_low = np.array([20, 80, 0])
-    green_high = np.array([60, 100, 50])
+    green_low = np.array([60, 100, 30])
+    green_high = np.array([120, 255, 80])
 
     ####################################################################################################################
     video_res = (1280, 720)
