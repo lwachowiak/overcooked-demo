@@ -6,7 +6,7 @@ from pathlib import Path
 import os
 
 #  parameters are the CSV files that contain the gaze position and agent positions acquired from the world frame,
-def match_gaze_to_agents(input_agents, input_gaze):
+def match_gaze_to_agents(input_agents, input_gaze, start_frame, end_frame):
     ###################### CHANGE HERE ################################
     thresh = 40
     out_filepath = Path('gaze_agent_merged/' + input_agents[28:-11] + "merged.csv")
@@ -41,20 +41,39 @@ def match_gaze_to_agents(input_agents, input_gaze):
     distances.loc[(distances["gaze_to_human"] < thresh) & (distances["gaze_to_ai"] < thresh) & (distances["gaze_to_human"] > distances["gaze_to_ai"]),"Gaze_focus"] = "AI"
     distances["Condition"] = "TODO"
 
+    distances=distances.iloc[start_frame:end_frame]
+
     distances.to_csv(out_filepath)
+
+
+# list of start and end frames
+lvl1_start=[39,  7,   24,  37,  49,  90,  18,  39,  5,   30,  0, 41,  25,16,36,41,18,20,  329, 36,  124, 22,  36, 0, 56, 0, 30, 47, 38, 63, 61, 0, 33, 0, 29]
+lvl2_start=[17, 26, 18 , 34,  0 ,  59,  25 , 13 , 15 , 17, 0, 11, 24, 20, 11,  13, 21 , 23,  97 , 33 , 29 , 20 , 37, 0, 46, 0, 20, 66 , 39 , 50,  59, 0,27, 0, 32]   
+lvl1_end=[1070, 1017, 1032,    1057,    1015,    1131,    1093,    1100,    1072,    1049, 0, 1075,  996, 1137  ,  1188 ,   1083 ,   1103  ,  1143  ,  1446 ,   1117  ,  1179  ,  986, 1056, 0, 1068, 0, 1098, 1065, 1055,  1164, 1099, 0, 1010, 0, 1090]
+lvl2_end=[1025,  983, 841, 1088 ,   968, 1065  ,  1067,    1049,    1002   , 988, 0, 1049,    997, 1125 ,   1090 ,   1008 ,   1081 ,   1121 ,   1196 ,   1097  ,  1077 ,   982, 1021, 0, 1045, 0,   1061 ,   1084 ,   1056  ,  1111,    1145, 0, 998, 0, 1078]  
 
 # annotate all csvs in folder position_monitor_annotation
 path = "position_monitor_annotation"
 directories = sorted(os.listdir( path ))
- 
+
+participant_counter=-1 
 for ag_file in directories:
     if ag_file[-3:]=="csv":
         participant=ag_file[0:3]
         lvl=ag_file[4:7]
-        input_gaze="HRI-Experiment-1-Data/"+participant+"/"+lvl+"/exports/000/gaze_positions.csv"
-        #print("merging "+ag_file+" and "+input_gaze)
+        if lvl=="000": 
+            participant_counter+=1
+            start_frame = lvl1_start[participant_counter]
+            end_frame = lvl1_end[participant_counter]
+        else:
+            start_frame = lvl2_start[participant_counter]
+            end_frame = lvl2_end[participant_counter]
+
+        input_gaze = "HRI-Experiment-1-Data/"+participant+"/"+lvl+"/exports/000/gaze_positions.csv"
+
+        print("merging "+ag_file+" and "+input_gaze, "from", start_frame, "to", end_frame)
         try: 
-            match_gaze_to_agents(input_agents="position_monitor_annotation/"+ag_file, input_gaze=input_gaze)
+            match_gaze_to_agents(input_agents="position_monitor_annotation/"+ag_file, input_gaze=input_gaze, start_frame=start_frame, end_frame=end_frame)
         except Exception as err: 
             print("merginging failed "+ag_file+" and "+input_gaze)
             print(err)
