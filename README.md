@@ -22,7 +22,7 @@ The server can be deployed locally using the driver script included in the repo.
 ```bash
 ./up.sh production
 ```
-In order to build and run the development server, which includes a deterministic scheduler and helpful debugging logs, run
+In order to build and run the development server, which includes helpful debugging logs, run
 ```bash
 ./up.sh
 ```
@@ -33,4 +33,12 @@ In order to kill the production server, run
 ```bash
 ./down.sh
 ```
+## Making changes
+If you want to make any changes to the environment start looking at these files:
+* For Agent Policies: `game.py`
+* For Page Layout: `index.html` and `overcooked_graphics_v2.2.js`
+* For Game Graphics: `Terrain.png`and `Chefs.png`
+* Server Communication: `app.py
+* Game Logic: look into https://github.com/Ptisni/overcooked_ai
+
 
