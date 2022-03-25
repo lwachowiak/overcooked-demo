@@ -38,7 +38,7 @@ If you want to make any changes to the environment start looking at these files:
 * For Agent Policies: `game.py`
 * For Page Layout: `index.html` and `overcooked_graphics_v2.2.js`
 * For Game Graphics: `Terrain.png`and `Chefs.png`
-* Server Communication: `app.py
+* Server Communication: `app.py`
 * Game Logic: look into https://github.com/Ptisni/overcooked_ai
 
 
