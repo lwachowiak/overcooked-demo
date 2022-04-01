@@ -3,7 +3,7 @@
 <img src="./server/static/images/browser_view.png" >
 </p>
 
-This fork of Human-compatible AI's Overcooked Demo has been modified for use in experiments on importance of eye gaze in human-AI collaboration, carried out at King's College London in 2022 by P. Tisnikar and L. Wachowiak. The custom environment contains 2 levels, forced_coordination and counter_circuit, with modified graphics to hide tomatos in a cupboard in order to confuse the players. Added functionality includes automatic screen capture when a game is active, and integration with eye-tracking software.
+This fork of Human-compatible AI's Overcooked Demo has been modified for use in experiments on importance of eye gaze in human-AI collaboration, carried out at King's College London in 2022 by P. Tisnikar and L. Wachowiak. The custom environment contains 2 levels, forced_coordination and counter_circuit, with modified graphics to hide tomatos in a cupboard in order to confuse the players. Added functionality includes integration with eye-tracking software.
 
 The server uses a custom branch of the original overcooked-ai game environment that can be found [here](https://github.com/Ptisni/overcooked_ai). This environment contains the modified layouts, player starting positions, and recipes used in the experiments, along with suspension of cooking unless all 3 ingredients are present in the pot.
 
