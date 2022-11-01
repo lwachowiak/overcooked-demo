@@ -3,7 +3,19 @@
 <img src="./server/static/images/browser_view.png" >
 </p>
 
-This fork of Human-compatible AI's Overcooked Demo has been modified for use in experiments on importance of eye gaze in human-AI collaboration, carried out at King's College London in 2022 by P. Tisnikar and L. Wachowiak. The custom environment contains 2 levels, forced_coordination and counter_circuit, with modified graphics to hide tomatos in a cupboard in order to confuse the players. Added functionality includes integration with eye-tracking software.
+This fork of Human-compatible AI's Overcooked Demo has been modified for use in experiments on importance of eye gaze in human-AI collaboration, carried out at King's College London in 2022 by P. Tisnikar and L. Wachowiak. The custom environment contains 2 levels, forced_coordination and counter_circuit, with modified graphics to hide tomatoes in a cupboard in order to confuse the players. Added functionality includes integration with eye-tracking software.
+
+The results of this study are available and discussed [here](https://kclpure.kcl.ac.uk/portal/en/publications/analysing-eye-gaze-patterns-during-confusion-and-errors-in-humanagent-collaborations(2c34300b-c53e-44e3-95c8-5a4e23a2f09d).html). If using this specific environment, please cite as:
+
+>@inproceedings{wachowiak2022analysing,
+  title={Analysing eye gaze patterns during confusion and errors in human--agent collaborations},
+  author={Wachowiak, Lennart and Tisnikar, Peter and Canal, Gerard and Coles, Andrew and Leonetti, Matteo and Celiktutan, Oya},
+  booktitle={2022 31st IEEE International Conference on Robot and Human Interactive Communication (RO-MAN)},
+  pages={224--229},
+  year={2022},
+  organization={IEEE}
+}
+
 
 The server uses a custom branch of the original overcooked-ai game environment that can be found [here](https://github.com/Ptisni/overcooked_ai). This environment contains the modified layouts, player starting positions, and recipes used in the experiments, along with suspension of cooking unless all 3 ingredients are present in the pot.
 
